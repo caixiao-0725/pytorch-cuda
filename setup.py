@@ -1,5 +1,14 @@
+import glob
+import os.path as osp
 from setuptools import setup
-from torch.utils.cpp_extension import BuildExtension, CppExtension
+from torch.utils.cpp_extension import BuildExtension, CUDAExtension
+
+
+ROOT_DIR = osp.dirname(osp.abspath(__file__))
+include_dirs = [osp.join(ROOT_DIR, "include")]
+
+sources = glob.glob('*.cpp')+glob.glob('*.cu')
+
 
 setup(
     name='cppcuda_tutorial',
@@ -9,9 +18,10 @@ setup(
     description='cppcuda tutorial',
     long_description='cppcuda tutorial',
     ext_modules=[
-        CppExtension(
+        CUDAExtension(
             name='cppcuda_tutorial',
-            sources=['interpolation.cpp'],
+            sources=sources,
+            include_dirs=include_dirs,
         )
     ],
     cmdclass={

@@ -8,4 +8,4 @@ torch文档：https://pytorch.org/cppdocs/
 
 速度真比pytorch写的快，不过不知道为啥。
 
-![Image text]（https://github.com/caixiao-0725/pytorch-cuda/blob/main/pictures/trilinear.png）
+![Image text](https://github.com/caixiao-0725/pytorch-cuda/blob/main/pictures/trilinear.png)

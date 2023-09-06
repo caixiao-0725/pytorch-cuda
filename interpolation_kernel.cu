@@ -9,7 +9,7 @@ __global__ void trilinear_fw_kernel(
     const int n = blockIdx.x * blockDim.x + threadIdx.x;
     const int f = blockIdx.y * blockDim.y + threadIdx.y;
 
-    if (n>=feats.s ize(0) || f>=feats.size(2)) return;
+    if (n>=feats.size(0) || f>=feats.size(2)) return;
 
     // point -1~1
     const scalar_t u = (points[n][0]+1)/2;
@@ -39,21 +39,24 @@ torch::Tensor trilinear_fw_cu(
     const int N = feats.size(0);
     const int F = feats.size(2);
 
-    torch::Tensor feat_interp = torch::zeros({N, F}, feats.options());
+    torch::Tensor feat_interp = torch::empty({N, F}, feats.options());
     //torch::zeros({N, F},torch::dtype(torch::kInt32).device(feats.device()));
     const dim3 threads(16,16); //256
     //const dim3 threads(256); //256
     const dim3 blocks((N + threads.x - 1) / threads.x, (F + threads.y - 1) / threads.y);
 
-    AT_DISPATCH_FLOATING_TYPES(feats.type(), "trilinear_fw_cuda", ([&] {
+    AT_DISPATCH_FLOATING_TYPES(feats.type(), "trilinear_fw_cuda", 
+    ([&] {
         trilinear_fw_kernel<scalar_t><<<blocks, threads>>>(
             feats.packed_accessor<scalar_t,3,torch::RestrictPtrTraits,size_t>(),
-            point.data<scalar_t,2,torch::RestrictPtrTraits,size_t>(),
-            feat_interp.data<scalar_t,2,torch::RestrictPtrTraits,size_t>());
+            point.packed_accessor<scalar_t,2,torch::RestrictPtrTraits,size_t>(),
+            feat_interp.packed_accessor<scalar_t,2,torch::RestrictPtrTraits,size_t>()
+            
         //trilinear_fw_kernel<<<blocks, threads>>>(
         //    feats.packed_accessor<float,3,torch::RestrictPtrTraits>(),
-        //    point.data<float,2,torch::RestrictPtrTraits>(),
-        //    feat_interp.data<float,2,torch::RestrictPtrTraits>());
+        //    point.packed_accessor<float,2,torch::RestrictPtrTraits>(),
+        //    feat_interp.packed_accessor<float,2,torch::RestrictPtrTraits>());
+        );
     }));
     return feat_interp;
 }

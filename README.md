@@ -4,5 +4,8 @@
 
 torch文档：https://pytorch.org/cppdocs/
 
-这门课讲的是再pytorch中调用自己的写的cuda核函数
+这门课讲的是在pytorch中调用自己的写的cuda核函数
 
+速度真比pytorch写的快，不过不知道为啥。
+
+![Image text] 

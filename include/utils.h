@@ -5,5 +5,10 @@
 #define CHECK_INPUT(x) CHECK_CUDA(x); CHECK_CONTIGUOUS(x)
 
 torch::Tensor trilinear_fw_cu(
-    torch::Tensor feats,
-    torch::Tensor point);
+    const torch::Tensor feats,
+    const torch::Tensor point);
+
+torch::Tensor trilinear_bw_cu(
+    const torch::Tensor dL_dfeat_interp,
+    const torch::Tensor feats,
+    const torch::Tensor point);
